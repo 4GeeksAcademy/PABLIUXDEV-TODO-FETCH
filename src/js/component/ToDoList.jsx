@@ -9,6 +9,19 @@ const ToDoList = () => {
 
     const loadTask = async () => {
         const response = await fetch("https://playground.4geeks.com/todo/users/pablodavila")
+        if ( ! response.ok ){
+            const responseUser = await fetch("https://playground.4geeks.com/todo/users/pablodavila", {
+
+                method: "POST",
+                body: JSON.stringify({
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            loadTask()
+            return 
+        }
         const body = await response.json()
         setTaskList(body.todos)
     }
@@ -24,6 +37,7 @@ const ToDoList = () => {
     }
 
     const postTask = async (id) => {
+        if(newTask == "") return 
         const response = await fetch("https://playground.4geeks.com/todo/todos/pablodavila", {
 
             method: "POST",
@@ -54,7 +68,7 @@ const ToDoList = () => {
                 <div className="card-header h1 bg-dark text-white">
                     To Do's
                     <div className="card-body h5">
-
+                        
                         <input className="m-2 h6 input-group text-center mx-auto" type="text" value={newTask} placeholder="What do you want to do next?"
                             onChange={(event) => setNewTask(event.target.value)}
 
@@ -67,7 +81,7 @@ const ToDoList = () => {
                         />
                        
                         
-                        {(taskList.length == 0) && <div>No more tasks! Time for a drink!</div>}
+                        {taskList &&(taskList.length == 0) && <div>No more tasks! Time for a drink!</div>}
                         {taskList && taskList.map((tarea, indice) => <Task task={tarea.label} key={indice} onRemove={() => {
                             deleteTask(tarea.id)
                         }} />)}
